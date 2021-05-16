@@ -1,0 +1,30 @@
+body {
+  background-color: #F0F7F4;
+  color: #32292F;
+  font-size: 20px;
+  font-family: courier;
+}
+
+button {
+  background-color: #70ABAF;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: courier;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item {
+  margin-top: 20px;
+  max-width: 600px;
+}
