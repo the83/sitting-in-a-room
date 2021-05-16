@@ -4,7 +4,7 @@ navigator.mediaDevices.getUserMedia({
   const BUTTON_STATES = {
     start: 'record',
     loop: 'loop',
-    end: 'end piece',
+    end: 'stop',
   };
 
   let loopCount = 0;
