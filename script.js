@@ -1,6 +1,6 @@
 navigator.mediaDevices.getUserMedia({
   audio: true
-}).then(function (mediaStream) {
+}).then(function (audioStream) {
   const BUTTON_STATES = {
     start: 'record',
     loop: 'loop',
@@ -8,21 +8,23 @@ navigator.mediaDevices.getUserMedia({
   };
 
   let loopCount = 0;
-  const recorder = new MediaRecorder(mediaStream);
-  const buffer = [];
+  let loopAudio = [];
+
+  const loopRecorder = new MediaRecorder(audioStream);
+
   const button = document.getElementById('control-button');
   const player = document.getElementById('player');
 
   player.onended = loopEnd;
-  recorder.onstop = playLoop;
+  loopRecorder.onstop = playLoop;
 
-  recorder.ondataavailable = function (evt) {
-    buffer.push(evt.data);
-  }
+  loopRecorder.addEventListener('dataavailable', function (evt) {
+    loopAudio.push(evt.data);
+  });
 
   button.addEventListener('click', function (ev) {
-    if (recorder.state === 'inactive') {
-      startRecorder();
+    if (loopRecorder.state === 'inactive') {
+      startLoopRecorder();
       updateButtonText(BUTTON_STATES.loop);
     } else if (player.currentTime === 0) {
       loopEnd()
@@ -48,17 +50,13 @@ navigator.mediaDevices.getUserMedia({
     player.currentTime = 0;
     player.src = '';
 
-    recorder.stop();
+    loopRecorder.stop();
     updateButtonText(BUTTON_STATES.start);
   }
 
-  function startRecorder() {
-    buffer.length = 0;
-
-    // is this necessary?
-    if (recorder.state !== 'recording') {
-      recorder.start();
-    }
+  function startLoopRecorder() {
+    loopAudio.length = 0;
+    loopRecorder.start();
   }
 
   function playLoop() {
@@ -69,18 +67,17 @@ navigator.mediaDevices.getUserMedia({
 
     player.src = window.URL.createObjectURL(
       new Blob(
-        buffer,
+        loopAudio,
         { 'type': 'audio/wav;' },
       )
     );
 
-    player.currentTime = 0;
+    startLoopRecorder();
     player.play();
-    startRecorder();
   }
 
   function loopEnd() {
     updateLoopCount(loopCount + 1);
-    recorder.stop();
+    loopRecorder.stop();
   }
 });
